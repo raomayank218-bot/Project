@@ -55,5 +55,20 @@ services:
         uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
       "
 
+  # ── Frontend (React + Vite) ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stp_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/index.html:/app/index.html
+    depends_on:
+      backend:
+        condition: service_healthy
+
 volumes:
   postgres_data:
