@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+
+  # ── Database (Postgres + TimescaleDB for time-series) ──────────────────
+  db:
+    image: timescale/timescaledb:latest-pg15
+    container_name: stp_db
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USER:-stp_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-stp_pass}
+      POSTGRES_DB: ${DB_NAME:-stp_trading}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-stp_user} -d ${DB_NAME:-stp_trading}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  # ── Backend (FastAPI) ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stp_backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-stp_user}:${DB_PASSWORD:-stp_pass}@db:5432/${DB_NAME:-stp_trading}
+      DATABASE_URL_SYNC: postgresql://${DB_USER:-stp_user}:${DB_PASSWORD:-stp_pass}@db:5432/${DB_NAME:-stp_trading}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command: >
+      sh -c "
+        echo '--- Running migrations ---' &&
+        alembic upgrade head &&
+        echo '--- Ingesting market data ---' &&
+        python -m app.scripts.ingest_data &&
+        echo '--- Seeding reference data ---' &&
+        python -m app.scripts.seed_reference &&
+        echo '--- Starting server ---' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  # ── Frontend (React + Vite) ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stp_frontend
+    environment:
+      VITE_API_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
