@@ -16,7 +16,7 @@ class Price(Base):
 
     id            = Column(String(36), primary_key=True)
     instrument_id = Column(String(20), nullable=False, index=True)
-    timestamp     = Column(DateTime(timezone=True), nullable=False, index=True)
+    timestamp     = Column(DateTime(timezone=True), primary_key=True, nullable=False, index=True)
     interval_type = Column(String(10), nullable=False, default="1min")  # 1min, daily
     open          = Column(Numeric(18, 4), nullable=False)
     high          = Column(Numeric(18, 4), nullable=False)

@@ -264,7 +264,7 @@ def upgrade() -> None:
     op.create_table('prices',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('instrument_id', sa.String(20), nullable=False),
-        sa.Column('timestamp', sa.DateTime(timezone=True), nullable=False),
+        sa.Column('timestamp', sa.DateTime(timezone=True), primary_key=True, nullable=False),
         sa.Column('interval_type', sa.String(10), nullable=False),
         sa.Column('open', sa.Numeric(18, 4), nullable=False),
         sa.Column('high', sa.Numeric(18, 4), nullable=False),

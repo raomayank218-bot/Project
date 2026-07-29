@@ -1,6 +1,6 @@
 """Exception and Audit models — FR-F-01 to FR-F-09, NFR-AU-01."""
 import enum
-from sqlalchemy import Column, String, DateTime, Enum as SAEnum, Text, Integer, JSON
+from sqlalchemy import Column, String, DateTime, Enum as SAEnum, Text, Integer, JSON, Sequence
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -76,7 +76,7 @@ class AuditLog(Base):
     __tablename__ = "audit_log"
 
     id              = Column(String(36), primary_key=True)
-    sequence_num    = Column(Integer, nullable=False, autoincrement=True, unique=True)
+    sequence_num    = Column(Integer, Sequence("audit_log_sequence_num_seq"), nullable=False, unique=True)
     correlation_id  = Column(String(36), nullable=True, index=True)
 
     # Actor
