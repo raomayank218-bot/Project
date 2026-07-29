@@ -11,7 +11,7 @@ from datetime import datetime, timezone, date
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, Date
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.account import Account, AccountStatus
@@ -231,7 +231,7 @@ class RiskEngine:
         daily_limit = Decimal(str(account.daily_notional_limit))
 
         # Cumulative traded notional today
-        today = datetime.now(timezone.utc).date().isoformat()
+        today = datetime.now(timezone.utc).date()
         result = await self.db.execute(
             select(func.coalesce(func.sum(Order.quantity * Order.avg_fill_price), 0))
             .where(Order.account_id == account.id)

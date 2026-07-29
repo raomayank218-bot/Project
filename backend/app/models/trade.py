@@ -49,7 +49,7 @@ class Trade(Base):
     tax             = Column(Numeric(18, 4), nullable=False, default=0)
     net_consideration = Column(Numeric(18, 4), nullable=False)
     settlement_date = Column(String(10), nullable=False)       # ISO date string
-    settlement_status = Column(SAEnum(SettlementStatus), nullable=False,
+    settlement_status = Column(String(30), nullable=False,
                                default=SettlementStatus.PENDING)
     entering_user_id = Column(String(36), nullable=False)
     beneficiary_account_id = Column(String(36), nullable=True)
@@ -113,7 +113,7 @@ class SettlementInstruction(Base):
     net_consideration = Column(Numeric(18, 4), nullable=False)
     currency        = Column(String(3), nullable=False, default="USD")
     settlement_date = Column(String(10), nullable=False)
-    status          = Column(SAEnum(SettlementStatus), nullable=False,
+    status          = Column(String(30), nullable=False,
                              default=SettlementStatus.PENDING)
     counterparty    = Column(String(100), nullable=False, default="SIM_CUSTODIAN")
     fail_reason     = Column(Text, nullable=True)

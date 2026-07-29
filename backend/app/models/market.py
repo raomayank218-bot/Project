@@ -67,8 +67,8 @@ class RiskLimit(Base):
     __tablename__ = "risk_limits"
 
     id          = Column(String(36), primary_key=True)
-    scope       = Column(SAEnum(LimitScope), nullable=False)
-    limit_type  = Column(SAEnum(LimitType), nullable=False)
+    scope       = Column(String(15), nullable=False)
+    limit_type  = Column(String(25), nullable=False)
     scope_id    = Column(String(36), nullable=True)   # account_id or instrument_id; null = global
     value       = Column(Numeric(18, 4), nullable=False)
     currency    = Column(String(3), nullable=False, default="USD")

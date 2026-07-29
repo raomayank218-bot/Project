@@ -67,17 +67,17 @@ class Order(Base):
     account_id      = Column(String(36), nullable=False, index=True)
     entering_user_id = Column(String(36), nullable=False)
     beneficiary_account_id = Column(String(36), nullable=True)        # delegated trading
-    source          = Column(SAEnum(OrderSource), nullable=False, default=OrderSource.GUI)
+    source          = Column(String(20), nullable=False, default=OrderSource.GUI)
     is_paper        = Column(Boolean, nullable=False, default=False)
 
     # What
     instrument_id   = Column(String(20), nullable=False, index=True)
-    side            = Column(SAEnum(OrderSide), nullable=False)
-    order_type      = Column(SAEnum(OrderType), nullable=False)
+    side            = Column(String(4), nullable=False)
+    order_type      = Column(String(15), nullable=False)
     quantity        = Column(Numeric(18, 4), nullable=False)
     price           = Column(Numeric(18, 4), nullable=True)           # null for market orders
     stop_price      = Column(Numeric(18, 4), nullable=True)
-    time_in_force   = Column(SAEnum(TimeInForce), nullable=False, default=TimeInForce.DAY)
+    time_in_force   = Column(String(3), nullable=False, default=TimeInForce.DAY)
 
     # Execution progress
     filled_quantity = Column(Numeric(18, 4), nullable=False, default=0)
@@ -85,7 +85,7 @@ class Order(Base):
     remaining_qty   = Column(Numeric(18, 4), nullable=True)
 
     # State
-    state           = Column(SAEnum(OrderState), nullable=False, default=OrderState.RECEIVED, index=True)
+    state           = Column(String(30), nullable=False, default=OrderState.RECEIVED, index=True)
     reject_reason   = Column(Text, nullable=True)
     cancel_reason   = Column(Text, nullable=True)
 

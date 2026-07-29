@@ -1,6 +1,6 @@
 """Exception and Audit models — FR-F-01 to FR-F-09, NFR-AU-01."""
 import enum
-from sqlalchemy import Column, String, DateTime, Enum as SAEnum, Text, Integer, JSON
+from sqlalchemy import Column, String, DateTime, Enum as SAEnum, Text, Integer, JSON, text
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -38,9 +38,9 @@ class TradingException(Base):
     __tablename__ = "trading_exceptions"
 
     id              = Column(String(36), primary_key=True)
-    code            = Column(SAEnum(ExceptionCode), nullable=False, index=True)
-    severity        = Column(SAEnum(ExceptionSeverity), nullable=False)
-    status          = Column(SAEnum(ExceptionStatus), nullable=False,
+    code            = Column(String(10), nullable=False, index=True)
+    severity        = Column(String(10), nullable=False)
+    status          = Column(String(15), nullable=False,
                              default=ExceptionStatus.OPEN, index=True)
 
     # What this exception is about
@@ -76,7 +76,7 @@ class AuditLog(Base):
     __tablename__ = "audit_log"
 
     id              = Column(String(36), primary_key=True)
-    sequence_num    = Column(Integer, nullable=False, autoincrement=True, unique=True)
+    sequence_num    = Column(Integer, server_default=text("nextval('audit_log_sequence_num_seq')"), nullable=False, unique=True)
     correlation_id  = Column(String(36), nullable=True, index=True)
 
     # Actor

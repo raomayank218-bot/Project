@@ -19,7 +19,7 @@ class Account(Base):
     account_name    = Column(String(200), nullable=False)
     account_type    = Column(String(50), nullable=False, default="CASH")
     base_currency   = Column(String(3), nullable=False, default="USD")
-    status          = Column(SAEnum(AccountStatus), nullable=False, default=AccountStatus.ACTIVE)
+    status          = Column(String(20), nullable=False, default=AccountStatus.ACTIVE)
     is_paper        = Column(Boolean, nullable=False, default=False)  # paper trading account
 
     # Financial limits
