@@ -8,6 +8,7 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     watch: { usePolling: true },   // required for Docker volume mounts
-    hmr: { clientPort: 3000 },
+    hmr: false,
+    allowedHosts: true,
   },
 })

@@ -71,7 +71,6 @@ async function request(path, options = {}) {
 
   if (res.status === 401) {
     auth.clear();
-    window.location.reload();
     throw new ApiError('Session expired. Sign in again.', 401, null);
   }
 
