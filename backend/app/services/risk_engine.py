@@ -11,7 +11,7 @@ from datetime import datetime, timezone, date
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import select, func, Date
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.account import Account, AccountStatus

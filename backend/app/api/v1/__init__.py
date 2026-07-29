@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     auth, orders, trades, portfolio,
     instruments, risk, exceptions,
-    analytics, paper, reports, health, websocket
+    assistant, paper, reports, health, websocket
 )
 
 router = APIRouter()
@@ -14,7 +14,7 @@ router.include_router(portfolio.router,   prefix="/portfolio",   tags=["portfoli
 router.include_router(instruments.router, prefix="/instruments", tags=["instruments"])
 router.include_router(risk.router,        prefix="/risk",        tags=["risk"])
 router.include_router(exceptions.router,  prefix="/exceptions",  tags=["exceptions"])
-router.include_router(analytics.router,   prefix="/analytics",   tags=["analytics"])
+router.include_router(assistant.router,  prefix="/assistant",  tags=["assistant"])
 router.include_router(paper.router,       prefix="/paper",       tags=["paper"])
 router.include_router(reports.router,     prefix="/reports",     tags=["reports"])
 router.include_router(health.router,      prefix="/system",      tags=["system"])

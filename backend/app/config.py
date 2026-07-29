@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 480  # 8 hours
 
-    # GenAI
+    # GenAI — provider is a config value, not an architectural commitment
+    genai_provider: str = "none"          # gemini | anthropic | none
+    gemini_api_key: str = ""
     anthropic_api_key: str = ""
 
     # App

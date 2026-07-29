@@ -71,6 +71,7 @@ async function request(path, options = {}) {
 
   if (res.status === 401) {
     auth.clear();
+    window.location.reload();
     throw new ApiError('Session expired. Sign in again.', 401, null);
   }
 
@@ -149,6 +150,21 @@ export const api = {
   killSwitch: () => request('/api/v1/risk/kill-switch'),
   killActivate: () => request('/api/v1/risk/kill-switch/activate', { method: 'POST' }),
   killDeactivate: () => request('/api/v1/risk/kill-switch/deactivate', { method: 'POST' }),
+
+  // assistant — FR-K
+  aiStatus: () => request('/api/v1/assistant/status'),
+  aiParseOrder: (text) =>
+    request('/api/v1/assistant/parse-order', {
+      method: 'POST', body: JSON.stringify({ text }),
+    }),
+  aiAsk: (account_id, question, is_paper = false) =>
+    request('/api/v1/assistant/ask', {
+      method: 'POST', body: JSON.stringify({ account_id, question, is_paper }),
+    }),
+  aiCommentary: (id, paper = false) =>
+    request(`/api/v1/assistant/commentary/${id}?is_paper=${paper}`),
+  aiTriage: (id) => request(`/api/v1/assistant/triage/${id}`),
+  aiInteractions: () => request('/api/v1/assistant/interactions'),
 
   // ops
   opsDashboard: () => request('/api/v1/system/dashboard'),

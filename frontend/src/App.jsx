@@ -7,12 +7,14 @@ import Blotter from './components/Blotter';
 import Exceptions from './components/Exceptions';
 import Operations from './components/Operations';
 import Market from './components/Market';
+import Assistant from './components/Assistant';
 
 const clean = (v) => String(v ?? '').replace(/^\w+\./, '');
 
 const VIEWS = [
   { id: 'dashboard', label: 'Portfolio' },
   { id: 'trade', label: 'Trade' },
+  { id: 'assistant', label: 'Assistant' },
   { id: 'market', label: 'Market' },
   { id: 'blotter', label: 'Blotter' },
   { id: 'exceptions', label: 'Breaks' },
@@ -129,6 +131,13 @@ export default function App() {
                   account={account}
                   isPaper={isPaper}
                   onDone={() => setRefresh((n) => n + 1)}
+                />
+              )}
+              {view === 'assistant' && (
+                <Assistant
+                  account={account}
+                  isPaper={isPaper}
+                  onTraded={() => setRefresh((n) => n + 1)}
                 />
               )}
               {view === 'market' && <Market />}

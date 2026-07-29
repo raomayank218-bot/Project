@@ -14,6 +14,7 @@ export default function Exceptions({ onCount }) {
   const [reason, setReason] = useState('');
   const [note, setNote] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [triage, setTriage] = useState({});
 
   const load = () => {
     api.exceptions('?limit=200')
@@ -27,6 +28,17 @@ export default function Exceptions({ onCount }) {
     const t = setInterval(load, 8000);
     return () => clearInterval(t);
   }, []);
+
+  // FR-K-08 — advisory only; the analyst confirms and records the action
+  async function getTriage(id) {
+    setTriage((t) => ({ ...t, [id]: { loading: true } }));
+    try {
+      const r = await api.aiTriage(id);
+      setTriage((t) => ({ ...t, [id]: r }));
+    } catch (e) {
+      setTriage((t) => ({ ...t, [id]: { suggestion: e.message } }));
+    }
+  }
 
   async function resolve(id) {
     if (!reason.trim()) {
@@ -139,6 +151,29 @@ export default function Exceptions({ onCount }) {
                         <tr key={`${e.id}-form`}>
                           <td colSpan={8} style={{ background: 'var(--surface-2)' }}>
                             <div style={{ padding: '12px 14px', maxWidth: 620 }}>
+                                {triage[e.id] && (
+                                <div className="result good" style={{ marginBottom: 12 }}>
+                                  <span className="code">SUGGESTED — ADVISORY ONLY</span>
+                                  {triage[e.id].loading ? 'Reading the break…' : (
+                                    <div style={{ whiteSpace: 'pre-wrap', marginTop: 6 }}>
+                                      {triage[e.id].suggestion}
+                                    </div>
+                                  )}
+                                  {triage[e.id].provenance && (
+                                    <div className="tiny muted" style={{ marginTop: 8 }}>
+                                      {triage[e.id].provenance.degraded
+                                        ? 'Generated without a model — deterministic fallback.'
+                                        : `${triage[e.id].provenance.provider} · ${triage[e.id].provenance.model}. Verify before acting.`}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {!triage[e.id] && (
+                                <button className="btn btn-sm" style={{ marginBottom: 12 }}
+                                  onClick={() => getTriage(e.id)}>
+                                  Suggest a cause
+                                </button>
+                              )}
                               <label className="f">
                                 <span className="lab">Action taken</span>
                                 <input value={action} onChange={(ev) => setAction(ev.target.value)}
